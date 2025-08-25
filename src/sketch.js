@@ -15,22 +15,22 @@ var gameOver, restart;
 
 
 function preload(){
-  trex_running =   loadAnimation("trex1.png","trex3.png","trex4.png");
-  trex_collided = loadAnimation("trex_collided.png");
+  trex_running =   loadAnimation("assets/trex1.png","assets/trex3.png","assets/trex4.png");
+  trex_collided = loadAnimation("assets/trex_collided.png");
   
-  groundImage = loadImage("ground2.png");
+  groundImage = loadImage("assets/ground2.png");
   
-  cloudImage = loadImage("cloud.png");
+  cloudImage = loadImage("assets/cloud.png");
   
-  obstacle1 = loadImage("obstacle1.png");
-  obstacle2 = loadImage("obstacle2.png");
-  obstacle3 = loadImage("obstacle3.png");
-  obstacle4 = loadImage("obstacle4.png");
-  obstacle5 = loadImage("obstacle5.png");
-  obstacle6 = loadImage("obstacle6.png");
+  obstacle1 = loadImage("assets/obstacle1.png");
+  obstacle2 = loadImage("assets/obstacle2.png");
+  obstacle3 = loadImage("assets/obstacle3.png");
+  obstacle4 = loadImage("assets/obstacle4.png");
+  obstacle5 = loadImage("assets/obstacle5.png");
+  obstacle6 = loadImage("assets/obstacle6.png");
   
-  gameOverImg = loadImage("gameOver.png");
-  restartImg = loadImage("restart.png");
+  gameOverImg = loadImage("assets/gameOver.png");
+  restartImg = loadImage("assets/restart.png");
 }
 
 function setup() {
@@ -128,7 +128,7 @@ function spawnClouds() {
     cloud.y = Math.round(random(100, 220));
     cloud.addImage(cloudImage);
     cloud.scale = 0.5;
-    cloud.velocityX = -3;
+    cloud.velocityX = -(6 + 3*score/100);;
     
      //designe tempo de vida para a variável
     cloud.lifetime = 500;
@@ -145,7 +145,7 @@ function spawnClouds() {
 
 function spawnObstacles() {
   if(frameCount % 60 === 0) {
-    var obstacle = createSprite(1500, height - 95, 20, 30);
+    var obstacle = createSprite(width + 20, height - 350, 20, 30);
     //obstacle.debug = true;
     obstacle.velocityX = -(6 + 3*score/100);
     
