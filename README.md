@@ -1,6 +1,6 @@
 # 🦖 GAME-TRex-Remake
 
-> **Status:** 🚧 Em construção
+> **Status:** ✔️ Concluído
 
 ## 📖 Sobre
 
