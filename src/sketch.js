@@ -36,13 +36,15 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
-  trex = createSprite(50,550,20,50);
+  baseAltitude = (height/3) * 2
+
+  trex = createSprite(50,baseAltitude - 50,20,50);
   
   trex.addAnimation("running", trex_running);
   trex.addAnimation("collided", trex_collided);
   trex.scale = 0.5;
   
-  ground = createSprite(width/2, 580, width, 2);
+  ground = createSprite(width/2, baseAltitude, width, 2);
   ground.addImage("ground",groundImage);
   ground.x = ground.width /2;
   ground.velocityX = -(6 + 3*score/100);
@@ -59,7 +61,7 @@ function setup() {
   gameOver.visible = false;
   restart.visible = false;
   
-  invisibleGround = createSprite(width/2, 650, width, 125);
+  invisibleGround = createSprite(width/2, baseAltitude + 75, width, 125);
   invisibleGround.visible = false;
   
   cloudsGroup = new Group();
@@ -71,13 +73,13 @@ function setup() {
 function draw() {
   //trex.debug = true;
   background(255);
-  text("Pontuação: "+ score, 500,50);
+  text("Pontuação: "+ score, width * 0.8, height * 0.1);
   
   if (gameState===PLAY){
     score = score + Math.round(getFrameRate()/60);
     ground.velocityX = -(6 + 3*score/100);
   
-    if(keyDown("space") && trex.y >= 550) {
+    if(keyDown("space") && trex.y >= baseAltitude - 30) {
       trex.velocityY = -12;
     }
   
@@ -99,16 +101,16 @@ function draw() {
     gameOver.visible = true;
     restart.visible = true;
     
-    //defina a velocidade da cada objeto do jogo para 0
+    //define a velocidade da cada objeto do jogo para 0
     ground.velocityX = 0;
     trex.velocityY = 0;
     obstaclesGroup.setVelocityXEach(0);
     cloudsGroup.setVelocityXEach(0);
     
-    //mude a animação do trex
+    //muda a animação do trex
     trex.changeAnimation("collided",trex_collided);
     
-    //defina o tempo de vida dos objetos para que eles nunca sejam destruídos
+    //define o tempo de vida dos objetos para que eles nunca sejam destruídos
     obstaclesGroup.setLifetimeEach(-1);
     cloudsGroup.setLifetimeEach(-1);
     
@@ -122,22 +124,22 @@ function draw() {
 }
 
 function spawnClouds() {
-  //escreva o código aqui para fazer as nuvens surgirem
-  if (frameCount % 60 === 0) {
-    var cloud = createSprite(width + 20, height - 300, 40, 10);
-    cloud.y = Math.round(random(100, 220));
+  //código para fazer as nuvens surgirem
+  if (frameCount % 30 === 0) {
+    var cloud = createSprite(width + 20, baseAltitude/2, 40, 10);
+    cloud.y = Math.round(random(baseAltitude/3, baseAltitude/2));
     cloud.addImage(cloudImage);
     cloud.scale = 0.5;
     cloud.velocityX = -(6 + 3*score/100);;
     
-     //designe tempo de vida para a variável
+     //designa o tempo de vida para a variável
     cloud.lifetime = 500;
     
-    //ajuste a profundidade
+    //ajusta a profundidade
     cloud.depth = trex.depth;
     trex.depth = trex.depth + 1;
     
-    //adicione cada nuvem ao grupo
+    //adiciona cada nuvem ao grupo
     cloudsGroup.add(cloud);
   }
   
@@ -145,7 +147,7 @@ function spawnClouds() {
 
 function spawnObstacles() {
   if(frameCount % 60 === 0) {
-    var obstacle = createSprite(width + 20, height - 350, 20, 30);
+    var obstacle = createSprite(width + 20, baseAltitude - 7.5, 20, 30);
     //obstacle.debug = true;
     obstacle.velocityX = -(6 + 3*score/100);
     
