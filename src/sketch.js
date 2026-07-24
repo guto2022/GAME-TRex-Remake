@@ -3,7 +3,7 @@ var END = 0;
 var gameState = PLAY;
 
 var trex, trex_running, trex_collided;
-var ground, invisibleGround, groundImage;
+var ground, nextGround, groundImage, groundTileWidth, invisibleGround;
 
 var cloudsGroup, cloudImage;
 var obstaclesGroup, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6;
@@ -44,10 +44,18 @@ function setup() {
   trex.addAnimation("collided", trex_collided);
   trex.scale = 0.5;
   
-  ground = createSprite(width/2, baseAltitude, width, 2);
+  // Cada trecho cobre ao menos a largura da tela. O segundo já começa
+  // imediatamente depois do primeiro, antes de entrar na área visível.
+  groundTileWidth = Math.max(width, groundImage.width);
+  ground = createSprite(groundTileWidth / 2, baseAltitude, groundTileWidth, 2);
   ground.addImage("ground",groundImage);
-  ground.x = ground.width /2;
+  ground.scale = groundTileWidth / groundImage.width;
   ground.velocityX = -(6 + 3*score/100);
+
+  nextGround = createSprite(groundTileWidth * 1.5, baseAltitude, groundTileWidth, 2);
+  nextGround.addImage("ground",groundImage);
+  nextGround.scale = groundTileWidth / groundImage.width;
+  nextGround.velocityX = ground.velocityX;
   
   gameOver = createSprite(width/2, height/2 - 50);
   gameOver.addImage(gameOverImg);
@@ -73,20 +81,30 @@ function setup() {
 function draw() {
   //trex.debug = true;
   background(255);
+  textSize(18)
   text("Pontuação: "+ score, width * 0.8, height * 0.1);
   
   if (gameState===PLAY){
     score = score + Math.round(getFrameRate()/60);
+    var velocidade = -(6 + 3 * score / 100);
+
+    cloudsGroup.setVelocityXEach(velocidade);
+    obstaclesGroup.setVelocityXEach(velocidade);
     ground.velocityX = -(6 + 3*score/100);
+    nextGround.velocityX = ground.velocityX;
   
     if(keyDown("space") && trex.y >= baseAltitude - 30) {
       trex.velocityY = -12;
     }
   
-    trex.velocityY = trex.velocityY + 0.8
+    trex.velocityY = trex.velocityY + 1
   
-    if (ground.x < 0){
-      ground.x = ground.width/2;
+    if (ground.x + groundTileWidth / 2 < 0){
+      ground.x = nextGround.x + groundTileWidth;
+    }
+
+    if (nextGround.x + groundTileWidth / 2 < 0){
+      nextGround.x = ground.x + groundTileWidth;
     }
   
     trex.collide(invisibleGround);
@@ -103,6 +121,7 @@ function draw() {
     
     //define a velocidade da cada objeto do jogo para 0
     ground.velocityX = 0;
+    nextGround.velocityX = 0;
     trex.velocityY = 0;
     obstaclesGroup.setVelocityXEach(0);
     cloudsGroup.setVelocityXEach(0);
@@ -130,9 +149,8 @@ function spawnClouds() {
     cloud.y = Math.round(random(baseAltitude/3, baseAltitude/2));
     cloud.addImage(cloudImage);
     cloud.scale = 0.5;
-    cloud.velocityX = -(6 + 3*score/100);;
-    
-     //designa o tempo de vida para a variável
+    cloud.velocityX = -(6 + 3 * score / 100);
+    //designa o tempo de vida para a variável
     cloud.lifetime = 500;
     
     //ajusta a profundidade
@@ -149,7 +167,7 @@ function spawnObstacles() {
   if(frameCount % 60 === 0) {
     var obstacle = createSprite(width + 20, baseAltitude - 7.5, 20, 30);
     //obstacle.debug = true;
-    obstacle.velocityX = -(6 + 3*score/100);
+    obstacle.velocityX = -(6 + 3 * score / 100);
     
     //gere um obstáculo aleatório
     var rand = Math.round(random(1,6));
